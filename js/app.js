@@ -1,4 +1,4 @@
-const CLASS_NAME = '2026학년도 ○반'; // 이 한 줄만 바꾸면 반 이름을 변경할 수 있습니다.
+const CLASS_NAME = 'SRIHS 121th 103'; // 이 한 줄만 바꾸면 반 이름을 변경할 수 있습니다.
 const $ = (selector, parent = document) => parent.querySelector(selector);
 const make = (tag, className, text) => { const el = document.createElement(tag); if (className) el.className = className; if (text !== undefined) el.textContent = text; return el; };
 const formatDate = (value) => new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(`${String(value).slice(0, 10)}T00:00:00`));
