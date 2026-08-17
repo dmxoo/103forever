@@ -12,6 +12,7 @@ create table if not exists public.announcements (
   title text not null check (char_length(title) between 1 and 100),
   content text not null check (char_length(content) between 1 and 5000),
   is_important boolean not null default false,
+  image_path text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

@@ -1,0 +1,18 @@
+alter table public.announcements add column if not exists image_path text;
+create table if not exists public.timetable (id smallint primary key default 1 check (id = 1), image_path text not null, updated_at timestamptz not null default now());
+alter table public.timetable enable row level security;
+grant select on public.timetable to anon, authenticated;
+grant insert, update, delete on public.timetable to authenticated;
+drop policy if exists "Public reads timetable" on public.timetable;
+drop policy if exists "Admins manage timetable" on public.timetable;
+create policy "Public reads timetable" on public.timetable for select using (true);
+create policy "Admins manage timetable" on public.timetable for all to authenticated using (public.is_admin()) with check (public.is_admin());
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types) values ('notice-images', 'notice-images', true, 5242880, array['image/jpeg', 'image/png', 'image/webp', 'image/gif']) on conflict (id) do update set public = true, file_size_limit = 5242880;
+drop policy if exists "Public reads notice images" on storage.objects;
+drop policy if exists "Admins upload notice images" on storage.objects;
+drop policy if exists "Admins update notice images" on storage.objects;
+drop policy if exists "Admins delete notice images" on storage.objects;
+create policy "Public reads notice images" on storage.objects for select using (bucket_id = 'notice-images');
+create policy "Admins upload notice images" on storage.objects for insert to authenticated with check (bucket_id = 'notice-images' and public.is_admin());
+create policy "Admins update notice images" on storage.objects for update to authenticated using (bucket_id = 'notice-images' and public.is_admin()) with check (bucket_id = 'notice-images' and public.is_admin());
+create policy "Admins delete notice images" on storage.objects for delete to authenticated using (bucket_id = 'notice-images' and public.is_admin());
